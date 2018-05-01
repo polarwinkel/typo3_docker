@@ -1,0 +1,54 @@
+version: "2"
+services:
+  typo3:
+    build: .
+    ports:
+      - "81:80"
+      - "444:443"
+    volumes:
+      - ./fileadmin:/var/www/html/fileadmin
+      - ./typo3conf:/var/www/html/typo3conf
+      - ./uploads:/var/www/html/uploads
+#      - letsencrypt_etc:/etc/letsencrypt
+#      - letsencrypt_var:/var/lib/letsencrypt
+    networks:
+      - typo3net
+  
+  database:
+    image: mysql:5.7
+    command:
+      - --character-set-server=utf8
+      - --collation-server=utf8_unicode_ci
+    env_file:
+      - ./settings.env
+    volumes:
+      - ./database:/var/lib/mysql
+    #environment:
+    #  - "MYSQL_USER=${MYSQL_USER:-typo3}"
+    #  - "MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}"
+    #  - "MYSQL_DATABASE=${MYSQL_DATABASE:-typo3}"
+    #  - "MYSQL_RANDOM_ROOT_PASSWORD=yes"
+    networks:
+      - typo3net
+  
+#  certbot:
+#    image:
+#      certbot/certbot:certonly
+#    volumes:
+#      - letsencrypt_etc:/etc/letsencrypt
+#      - letsencrypt_var:/var/lib/letsencrypt
+
+#volumes:
+#  database: 
+##    ./database/:
+#  fileadmin:
+#    ./fileadmin/:
+#  typo3conf:
+#    ./typo3conf/:
+#  uploads:
+#    ./uploads/:
+#  letsencrypt_etc: letsencrypt_etc/
+#  letsencrypt_var: letsencrypt_var/
+  
+networks:
+  typo3net:
